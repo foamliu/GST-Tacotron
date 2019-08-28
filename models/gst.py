@@ -11,7 +11,7 @@ class GST(nn.Module):
     def __init__(self):
         super().__init__()
         self.encoder = ReferenceEncoder()
-        self.stl = STL()
+        self.stl = StyleTokenLayer()
 
     def forward(self, inputs):
         enc_out = self.encoder(inputs)
@@ -68,7 +68,7 @@ class ReferenceEncoder(nn.Module):
         return L
 
 
-class STL(nn.Module):
+class StyleTokenLayer(nn.Module):
     '''
     inputs --- [N, E//2]
     '''
