@@ -1,18 +1,13 @@
-import pickle
-import random
+import os
 from shutil import copyfile
 
-from config import data_file
+from config import thchs30_folder
+from utils import ensure_folder
 
-with open(data_file, 'rb') as file:
-    data = pickle.load(file)
+folder = os.path.join(thchs30_folder, 'train')
+files = [f for f in os.listdir(folder) if f.endswith('.wav')]
+filename = os.path.join(folder, files[0])
 
-split = 'train'
-samples = data[split]
-samples = random.sample(samples, 20)
-
-for i, sample in enumerate(samples):
-    audiopath = sample['audiopath']
-    print(audiopath)
-    target = 'audios/{}.wav'.format(i)
-    copyfile(audiopath, target)
+ensure_folder('audios')
+target = os.path.join('audios', files[0])
+copyfile(filename, target)
