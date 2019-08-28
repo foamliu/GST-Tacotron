@@ -41,7 +41,7 @@ class ReferenceEncoder(nn.Module):
 
         out_channels = self.calculate_channels(hp.n_mel_channels, 3, 2, 1, K)
         self.gru = nn.GRU(input_size=hp.ref_enc_filters[-1] * out_channels,
-                          hidden_size=hp.E // 2,
+                          hidden_size=hp.token_emb_size // 2,
                           batch_first=True)
 
     def forward(self, inputs):
