@@ -7,20 +7,17 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')  # sets de
 num_train = 120098
 num_dev = 14326
 num_test = 7176
-vocab_size = 33
 
 vocab = 'abcdefghijklmnopqrstuvwxyz12345 '
+vocab_size = len(vocab)
 idx_to_char = {i: vocab[i] for i in range(0, len(vocab))}
 char_to_idx = {vocab[i]: i for i in range(0, len(vocab))}
 
 unk_id = 0
 
-DATA_DIR = 'data'
-aishell_folder = 'data/data_aishell'
-wav_folder = os.path.join(aishell_folder, 'wav')
-tran_file = os.path.join(aishell_folder, 'transcript/aishell_transcript_v0.8.txt')
-data_file = 'data/aishell.pkl'
-speaker_info = 'data/speaker.info'
+thchs30_folder = 'data/data_thchs30'
+wav_folder = os.path.join(thchs30_folder, 'wav')
+
 
 ################################
 # Experiment Parameters        #
