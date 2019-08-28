@@ -54,6 +54,7 @@ symbols_embedding_dim = 512
 
 # Reference encoder
 ref_enc_filters = [32, 32, 64, 64, 128, 128]
+ref_wav = 'ref_wav/xiaofeng.wav'
 
 # Style token layer
 token_num = 10

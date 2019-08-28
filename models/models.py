@@ -515,11 +515,16 @@ class Tacotron2(nn.Module):
             [mel_outputs, mel_outputs_postnet, gate_outputs, alignments],
             output_lengths)
 
-    def inference(self, inputs):
-        embedded_inputs = self.embedding(inputs).transpose(1, 2)
-        encoder_outputs = self.encoder.inference(embedded_inputs)
+    def inference(self, text_inputs, ref_mels):
+        embedded_inputs = self.embedding(text_inputs).transpose(1, 2)
+        memory = self.encoder.inference(embedded_inputs)
+
+        style_embed = self.gst(ref_mels)  # [N, 256]
+        style_embed = style_embed.expand_as(memory)
+        memory = memory + style_embed
+
         mel_outputs, gate_outputs, alignments = self.decoder.inference(
-            encoder_outputs)
+            memory)
 
         mel_outputs_postnet = self.postnet(mel_outputs)
         mel_outputs_postnet = mel_outputs + mel_outputs_postnet

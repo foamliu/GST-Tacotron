@@ -104,6 +104,8 @@ class TextMelCollate:
         return text_padded, input_lengths, mel_padded, gate_padded, output_lengths
 
 
+
+
 # split in ['train', 'test', 'dev']
 def get_thchs30_data(split):
     print('loading {} samples...'.format(split))

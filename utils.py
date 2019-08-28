@@ -12,7 +12,7 @@ import numpy as np
 import pinyin
 import torch
 
-from config import sampling_rate, char_to_idx, idx_to_char
+from config import sampling_rate, char_to_idx, idx_to_char, ref_wav
 from models.layers import STFT
 
 
@@ -220,15 +220,17 @@ class Denoiser(torch.nn.Module):
         return audio_denoised
 
 
-def test(model, step_num, loss):
+def test(model, step_num, loss, get_mel):
     model.eval()
-
-    text = "必须树立公共交通优先发展的理念"
+    text = "相对论直接和间接的催生了量子力学的诞生 也为研究微观世界的高速运动确立了全新的数学模型"
     text = pinyin.get(text, format="numerical", delimiter=" ")
     sequence = np.array(text_to_sequence(text))[None, :]
     sequence = torch.autograd.Variable(torch.from_numpy(sequence)).cuda().long()
+
+    ref_mel = get_mel(ref_wav)
+
     with torch.no_grad():
-        mel_outputs, mel_outputs_postnet, _, alignments = model.inference(sequence)
+        mel_outputs, mel_outputs_postnet, _, alignments = model.inference(sequence, ref_mel)
     plot_data((mel_outputs.float().data.cpu().numpy()[0],
                mel_outputs_postnet.float().data.cpu().numpy()[0],
                alignments.float().data.cpu().numpy()[0].T))
