@@ -4,7 +4,7 @@ import torch
 from torch import nn
 from torch.autograd import Variable
 from torch.nn import functional as F
-
+from .gst import GST
 from utils import get_mask_from_lengths, to_gpu
 from .layers import ConvNorm, LinearNorm
 
@@ -465,6 +465,8 @@ class Tacotron2(nn.Module):
         self.decoder = Decoder(hparams)
         self.postnet = Postnet(hparams)
 
+        self.gst = GST()
+
     def parse_batch(self, batch):
         text_padded, input_lengths, mel_padded, gate_padded, \
         output_lengths = batch
@@ -492,15 +494,19 @@ class Tacotron2(nn.Module):
         return outputs
 
     def forward(self, inputs):
-        text_inputs, text_lengths, mels, max_len, output_lengths = inputs
+        text_inputs, text_lengths, mels, max_len, output_lengths, ref_mels = inputs
         text_lengths, output_lengths = text_lengths.data, output_lengths.data
 
         embedded_inputs = self.embedding(text_inputs).transpose(1, 2)
 
-        encoder_outputs = self.encoder(embedded_inputs, text_lengths)
+        memory = self.encoder(embedded_inputs, text_lengths)
+
+        style_embed = self.gst(ref_mels)  # [N, 256]
+        style_embed = style_embed.expand_as(memory)
+        memory = memory + style_embed
 
         mel_outputs, gate_outputs, alignments = self.decoder(
-            encoder_outputs, mels, memory_lengths=text_lengths)
+            memory, mels, memory_lengths=text_lengths)
 
         mel_outputs_postnet = self.postnet(mel_outputs)
         mel_outputs_postnet = mel_outputs + mel_outputs_postnet

@@ -9,9 +9,9 @@ num_dev = 14326
 num_test = 7176
 vocab_size = 33
 
-letters = '@abcdefghijklmnopqrstuvwxyz12345 '
-idx_to_char = {i: letters[i] for i in range(0, len(letters))}
-char_to_idx = {letters[i]: i for i in range(0, len(letters))}
+vocab = 'abcdefghijklmnopqrstuvwxyz12345 '
+idx_to_char = {i: vocab[i] for i in range(0, len(vocab))}
+char_to_idx = {vocab[i]: i for i in range(0, len(vocab))}
 
 unk_id = 0
 
@@ -21,7 +21,6 @@ wav_folder = os.path.join(aishell_folder, 'wav')
 tran_file = os.path.join(aishell_folder, 'transcript/aishell_transcript_v0.8.txt')
 data_file = 'data/aishell.pkl'
 speaker_info = 'data/speaker.info'
-
 
 ################################
 # Experiment Parameters        #
@@ -42,7 +41,7 @@ load_mel_from_disk = False
 # Audio Parameters             #
 ################################
 max_wav_value = 32768.0
-sampling_rate = 22050
+sampling_rate = 16000  # thchs30, aishell
 filter_length = 1024
 hop_length = 256
 win_length = 1024
@@ -55,6 +54,14 @@ mel_fmax = 8000.0
 ################################
 n_symbols = vocab_size
 symbols_embedding_dim = 512
+
+# Reference encoder
+ref_enc_filters = [32, 32, 64, 64, 128, 128]
+
+# Style token layer
+token_num = 10
+token_emb_size = 256
+num_heads = 8
 
 # Encoder parameters
 encoder_kernel_size = 5
