@@ -239,6 +239,7 @@ def test(model, step_num, loss, get_mel):
     title = 'step={0}, loss={1:.5f}'.format(step_num, loss)
     plt.title(title)
     filename = 'images/temp.jpg'
+    ensure_folder('images')
     plt.savefig(filename)
     img = cv.imread(filename)
     img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
