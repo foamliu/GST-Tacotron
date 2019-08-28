@@ -477,7 +477,7 @@ class Tacotron2(nn.Module):
         output_lengths = to_gpu(output_lengths).long()
 
         return (
-            (text_padded, input_lengths, mel_padded, max_len, output_lengths, mel_padded),
+            (text_padded, input_lengths, mel_padded, max_len, output_lengths),
             (mel_padded, gate_padded))
 
     def parse_output(self, outputs, output_lengths=None):
@@ -492,14 +492,16 @@ class Tacotron2(nn.Module):
 
         return outputs
 
+    # train
     def forward(self, inputs):
-        text_inputs, text_lengths, mels, max_len, output_lengths, ref_mels = inputs
+        text_inputs, text_lengths, mels, max_len, output_lengths = inputs
         text_lengths, output_lengths = text_lengths.data, output_lengths.data
 
         embedded_inputs = self.embedding(text_inputs).transpose(1, 2)
 
         memory = self.encoder(embedded_inputs, text_lengths)
 
+        ref_mels = mels
         style_embed = self.gst(ref_mels)  # [N, 256]
         style_embed = style_embed.expand_as(memory)
         memory = memory + style_embed
@@ -514,6 +516,7 @@ class Tacotron2(nn.Module):
             [mel_outputs, mel_outputs_postnet, gate_outputs, alignments],
             output_lengths)
 
+    # inference
     def inference(self, text_inputs, ref_mels):
         embedded_inputs = self.embedding(text_inputs).transpose(1, 2)
         memory = self.encoder.inference(embedded_inputs)

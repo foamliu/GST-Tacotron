@@ -37,7 +37,7 @@ class TextMelLoader(torch.utils.data.Dataset):
 
     def get_mel(self, filename):
         audio, sampling_rate = load_wav_to_torch(filename)
-        assert(sampling_rate == self.stft.sampling_rate)
+        assert (sampling_rate == self.stft.sampling_rate)
         audio_norm = audio.unsqueeze(0)
         audio_norm = torch.autograd.Variable(audio_norm, requires_grad=False)
         melspec = self.stft.mel_spectrogram(audio_norm)
@@ -102,8 +102,6 @@ class TextMelCollate:
             output_lengths[i] = mel.size(1)
 
         return text_padded, input_lengths, mel_padded, gate_padded, output_lengths
-
-
 
 
 # split in ['train', 'test', 'dev']
