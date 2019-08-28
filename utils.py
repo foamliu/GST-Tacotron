@@ -227,7 +227,7 @@ def test(model, step_num, loss, get_mel):
     sequence = np.array(text_to_sequence(text))[None, :]
     sequence = torch.autograd.Variable(torch.from_numpy(sequence)).cuda().long()
 
-    ref_mel = get_mel(ref_wav)
+    ref_mel = get_mel(ref_wav)[None, :]
 
     with torch.no_grad():
         mel_outputs, mel_outputs_postnet, _, alignments = model.inference(sequence, ref_mel)
