@@ -1,8 +1,9 @@
 import librosa
 import numpy as np
 import soundfile
+from utils import normalize
 
-fullpath = '../audios/BAC009S0764W0256.wav'
+fullpath = '../audios/C22_625.wav'
 sampling_rate = 22050
 
 y, sr = librosa.core.load(fullpath, sampling_rate)
@@ -16,7 +17,8 @@ soundfile.write('test.wav', y, sampling_rate)
 
 y, sr = librosa.load('test.wav')
 # Trim the beginning and ending silence
-yt, index = librosa.effects.trim(y, top_db=15)
+yt, index = librosa.effects.trim(y, top_db=20)
+yt = normalize(yt)
 print(index)
 # Print the durations
 print(librosa.get_duration(y), librosa.get_duration(yt))
