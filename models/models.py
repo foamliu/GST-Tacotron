@@ -4,8 +4,9 @@ import torch
 from torch import nn
 from torch.autograd import Variable
 from torch.nn import functional as F
-from .gst import GST
+
 from utils import get_mask_from_lengths, to_gpu
+from .gst import GST
 from .layers import ConvNorm, LinearNorm
 
 
@@ -468,8 +469,7 @@ class Tacotron2(nn.Module):
         self.gst = GST()
 
     def parse_batch(self, batch):
-        text_padded, input_lengths, mel_padded, gate_padded, \
-        output_lengths = batch
+        text_padded, input_lengths, mel_padded, gate_padded, output_lengths = batch
         text_padded = to_gpu(text_padded).long()
         input_lengths = to_gpu(input_lengths).long()
         max_len = torch.max(input_lengths.data).item()
@@ -478,7 +478,7 @@ class Tacotron2(nn.Module):
         output_lengths = to_gpu(output_lengths).long()
 
         return (
-            (text_padded, input_lengths, mel_padded, max_len, output_lengths),
+            (text_padded, input_lengths, mel_padded, max_len, output_lengths, mel_padded),
             (mel_padded, gate_padded))
 
     def parse_output(self, outputs, output_lengths=None):
