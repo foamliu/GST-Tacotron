@@ -228,6 +228,8 @@ def test(model, step_num, loss, get_mel):
     sequence = torch.autograd.Variable(torch.from_numpy(sequence)).cuda().long()
 
     ref_mel = get_mel(ref_wav)[None, :]
+    ref_mel = np.transpose(ref_mel, (0, 2, 1))
+    print('ref_mel.shape: ' + str(ref_mel.shape))
 
     with torch.no_grad():
         mel_outputs, mel_outputs_postnet, _, alignments = model.inference(sequence, ref_mel)
