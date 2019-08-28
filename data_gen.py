@@ -1,14 +1,13 @@
 import os
-import pickle
 import random
 
 import numpy as np
 import torch
 import torch.utils.data
 
-from config import thchs30_folder, char_to_idx
+from config import thchs30_folder
 from models import layers
-from utils import load_wav_to_torch
+from utils import load_wav_to_torch, text_to_sequence
 
 
 class TextMelLoader(torch.utils.data.Dataset):
@@ -19,14 +18,8 @@ class TextMelLoader(torch.utils.data.Dataset):
     """
 
     def __init__(self, split, hparams):
-        with open(data_file, 'rb') as file:
-            data = pickle.load(file)
-
-        self.samples = data[split]
-        print('loading {} {} samples...'.format(len(self.samples), split))
-
+        self.samples = get_thchs30_data(split)
         self.sampling_rate = hparams.sampling_rate
-        # self.max_wav_value = hparams.max_wav_value
         self.load_mel_from_disk = hparams.load_mel_from_disk
         self.stft = layers.TacotronSTFT(
             hparams.filter_length, hparams.hop_length, hparams.win_length,
@@ -44,10 +37,7 @@ class TextMelLoader(torch.utils.data.Dataset):
 
     def get_mel(self, filename):
         audio, sampling_rate = load_wav_to_torch(filename)
-        if sampling_rate != self.stft.sampling_rate:
-            raise ValueError("{} SR doesn't match target {} SR".format(
-                sampling_rate, self.stft.sampling_rate))
-        # audio_norm = audio / self.max_wav_value
+        assert(sampling_rate == self.stft.sampling_rate)
         audio_norm = audio.unsqueeze(0)
         audio_norm = torch.autograd.Variable(audio_norm, requires_grad=False)
         melspec = self.stft.mel_spectrogram(audio_norm)
@@ -56,6 +46,7 @@ class TextMelLoader(torch.utils.data.Dataset):
         return melspec
 
     def get_text(self, text):
+        text = text_to_sequence(text)
         text_norm = torch.IntTensor(text)
         return text_norm
 
@@ -113,45 +104,24 @@ class TextMelCollate:
         return text_padded, input_lengths, mel_padded, gate_padded, output_lengths
 
 
-def get_thchs30_data(dataset_dir):
-    wav_paths = []
-    text_paths = []
+# split in ['train', 'test', 'dev']
+def get_thchs30_data(split):
+    print('loading {} samples...'.format(split))
 
-    data_dir = os.path.join(dataset_dir, 'data')
-    for file in os.listdir(data_dir):
-        file_path = os.path.join(data_dir, file)
-        fname, ext = os.path.splitext(file_path)
-        if ext == '.wav' and fname[-7:] != '_cutoff':
-            wav_paths.append(fname + '_cutoff' + ext)
-            text_paths.append(file_path + '.trn')
+    data_dir = os.path.join(thchs30_folder, 'data')
+    wave_dir = os.path.join(thchs30_folder, split)
 
-    train_dir = os.path.join(dataset_dir, 'train')
-    test_dir = os.path.join(dataset_dir, 'test')
-    dev_dir = os.path.join(dataset_dir, 'dev')
+    samples = []
 
-    for d in [train_dir, test_dir, dev_dir]:
-        for file in os.listdir(d):
-            file_path = os.path.join(d, file)
-            fname, ext = os.path.splitext(file_path)
-            if ext == '.wav' and fname[-7:] != '_cutoff':
-                text_path = os.path.join(data_dir, file + '.trn')
-                wav_paths.append(fname + '_cutoff' + ext)
-                text_paths.append(text_path)
+    for file in os.listdir(wave_dir):
+        file_path = os.path.join(wave_dir, file)
+        if file_path.endswith('.wav'):
+            text_path = os.path.join(data_dir, file + '.trn')
+            with open(text_path, 'r', encoding='utf-8') as f:
+                text = f.readlines()[1].strip()
+            samples.append({'audiopath': file_path, 'text': text})
 
-    for wav, txt in zip(wav_paths[-20:], text_paths[-20:]):
-        print(wav, txt)
-
-    texts = []
-    for file in text_paths:
-        f = open(file, 'r', encoding='utf-8')
-        text = f.readlines()[1].strip()
-        text = [char_to_idx[c] for c in text]
-        text = torch.Tensor(text).type(torch.LongTensor)
-        texts.append(text)
-
-    print(wav_paths[0], text_paths[0])
-
-    return wav_paths, texts
+    return samples
 
 
 if __name__ == '__main__':
