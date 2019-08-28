@@ -41,6 +41,7 @@ class TextMelLoader(torch.utils.data.Dataset):
         audio_norm = audio.unsqueeze(0)
         audio_norm = torch.autograd.Variable(audio_norm, requires_grad=False)
         melspec = self.stft.mel_spectrogram(audio_norm)
+        print(melspec.shape)
         melspec = torch.squeeze(melspec, 0)
 
         return melspec
