@@ -30,6 +30,12 @@ def train_net(args):
         print(model)
         # model = nn.DataParallel(model)
 
+        total_params = sum(p.numel() for p in model.parameters())
+        trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+        print('total params: ' + str(total_params))
+        print('trainable params: ' + str(trainable_params))
+
         # optimizer
         optimizer = Tacotron2Optimizer(
             torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.l2, betas=(0.9, 0.999), eps=1e-6))
