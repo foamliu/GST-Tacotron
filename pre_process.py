@@ -1,6 +1,8 @@
 import os
 import pickle
 
+from tqdm import tqdm
+
 from config import data_file, thchs30_folder
 
 
@@ -13,7 +15,7 @@ def get_thchs30_data(split):
 
     samples = []
 
-    for file in os.listdir(wave_dir):
+    for file in tqdm(os.listdir(wave_dir)):
         file_path = os.path.join(wave_dir, file)
         if file_path.endswith('.wav'):
             text_path = os.path.join(data_dir, file + '.trn')
