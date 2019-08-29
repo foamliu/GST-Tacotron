@@ -59,10 +59,10 @@ def train_net(args):
     # Custom dataloaders
     train_dataset = TextMelLoader('train', config)
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, collate_fn=collate_fn,
-                                               shuffle=True, num_workers=0)
+                                               pin_memory=False, shuffle=True, num_workers=args.num_works)
     valid_dataset = TextMelLoader('dev', config)
     valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=args.batch_size, collate_fn=collate_fn,
-                                               shuffle=False, num_workers=0)
+                                               pin_memory=False, shuffle=False, num_workers=args.num_works)
 
     # Epochs
     for epoch in range(start_epoch, args.epochs):
