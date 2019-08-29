@@ -106,7 +106,8 @@ def train_net(args):
         writer.add_image('model/alignment', img_align, epoch, dataformats='HWC')
         # writer.add_audio('model/audio', audio, epoch, sample_rate=config.sampling_rate)
 
-        break
+        if epoch == 2:
+            break
 
 
 def train(train_loader, model, optimizer, criterion, epoch, logger):
