@@ -100,11 +100,11 @@ def train_net(args):
         # Save checkpoint
         save_checkpoint(epoch, epochs_since_improvement, model, optimizer, best_loss, is_best)
 
-        # alignments
-        # img_align, audio = test(model, optimizer.step_num, valid_loss, train_dataset.get_mel)
-        img_align = test(model, optimizer.step_num, valid_loss, train_dataset.get_mel)
-        writer.add_image('model/alignment', img_align, epoch, dataformats='HWC')
-        # writer.add_audio('model/audio', audio, epoch, sample_rate=config.sampling_rate)
+        # # alignments
+        # # img_align, audio = test(model, optimizer.step_num, valid_loss, train_dataset.get_mel)
+        # img_align = test(model, optimizer.step_num, valid_loss, train_dataset.get_mel)
+        # writer.add_image('model/alignment', img_align, epoch, dataformats='HWC')
+        # # writer.add_audio('model/audio', audio, epoch, sample_rate=config.sampling_rate)
 
 
 def train(train_loader, model, optimizer, criterion, epoch, logger):
@@ -144,6 +144,7 @@ def train(train_loader, model, optimizer, criterion, epoch, logger):
                         'Batch time {time.val:.4f} ({time.avg:.4f})\t'
                         'Loss {loss.val:.5f} ({loss.avg:.5f})'.format(epoch, i, len(train_loader), time=times,
                                                                       loss=losses))
+        break
 
     return losses.avg
 
@@ -166,6 +167,7 @@ def valid(valid_loader, model, criterion, logger):
 
         # Keep track of metrics
         losses.update(loss.item())
+        break
 
     # Print status
     logger.info('\nValidation Loss {loss.val:.5f} ({loss.avg:.5f})\n'.format(loss=losses))
