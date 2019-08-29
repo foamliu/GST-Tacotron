@@ -229,14 +229,17 @@ def test(model, step_num, loss, get_mel):
 
     with torch.no_grad():
         mel_outputs, mel_outputs_postnet, _, alignments = model.inference(sequence, ref_mel)
+        print('inference done')
     plot_data((mel_outputs.float().data.cpu().numpy()[0],
                mel_outputs_postnet.float().data.cpu().numpy()[0],
                alignments.float().data.cpu().numpy()[0].T))
+    print('plot done')
     title = 'step={0}, loss={1:.5f}'.format(step_num, loss)
     plt.title(title)
     filename = 'images/temp.jpg'
     ensure_folder('images')
     plt.savefig(filename)
+    print('savefig done')
     img = cv.imread(filename)
     img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
     img = img / 255.
@@ -256,5 +259,6 @@ def test(model, step_num, loss, get_mel):
 
     mel_outputs_postnet = mel_outputs_postnet.float().data.cpu().numpy()[0]
     np.save('mel_outputs.npy', mel_outputs_postnet)
+    print('save mel done')
 
     return img  # , audio
