@@ -251,12 +251,14 @@ def test(model, step_num, loss, get_mel):
     # for k in waveglow.convinv:
     #     k.float()
     #
-    mel_outputs_postnet = mel_outputs_postnet.type(torch.float16)
-    np.save('mel_outputs.npy', mel_outputs_postnet)
+    # mel_outputs_postnet = mel_outputs_postnet.type(torch.float16)
     # with torch.no_grad():
     #     audio = waveglow.infer(mel_outputs_postnet, sigma=0.666)
     #
     # audio = audio[0].data.cpu().numpy()
     # audio = audio.astype(np.float32)
+
+    mel_outputs_postnet = mel_outputs_postnet.float().data.cpu().numpy()[0]
+    np.save('mel_outputs.npy', mel_outputs_postnet)
 
     return img  # , audio
