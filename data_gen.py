@@ -31,6 +31,7 @@ class TextMelLoader(torch.utils.data.Dataset):
         random.shuffle(self.samples)
 
     def get_mel_text_pair(self, sample):
+        print('get_mel_text_pair')
         # separate filename and text
         audiopath, text = sample['audiopath'], sample['text']
         text = self.get_text(text)
@@ -38,6 +39,7 @@ class TextMelLoader(torch.utils.data.Dataset):
         return (text, mel)
 
     def get_mel(self, filename):
+        print('get_mel')
         audio, sampling_rate = load_wav_to_torch(filename)
         assert (sampling_rate == self.stft.sampling_rate)
         audio_norm = audio.unsqueeze(0)
@@ -49,11 +51,13 @@ class TextMelLoader(torch.utils.data.Dataset):
         return melspec
 
     def get_text(self, text):
+        print('get_text')
         text = text_to_sequence(text)
         text_norm = torch.IntTensor(text)
         return text_norm
 
     def __getitem__(self, index):
+        print('__getitem__ {}'.format(index))
         return self.get_mel_text_pair(self.samples[index])
 
     def __len__(self):
