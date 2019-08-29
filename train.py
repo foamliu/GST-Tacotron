@@ -102,9 +102,9 @@ def train_net(args):
 
         # alignments
         # img_align, audio = test(model, optimizer.step_num, valid_loss, train_dataset.get_mel)
-        img_align = test(model, optimizer.step_num, valid_loss, train_dataset.get_mel)
+        img_align, audio = test(model, optimizer.step_num, valid_loss, train_dataset.get_mel)
         writer.add_image('model/alignment', img_align, epoch, dataformats='HWC')
-        # writer.add_audio('model/audio', audio, epoch, sample_rate=config.sampling_rate)
+        writer.add_audio('model/audio', audio, epoch, sample_rate=config.sampling_rate)
 
         if epoch == 2:
             break
