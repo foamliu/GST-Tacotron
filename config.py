@@ -55,7 +55,7 @@ ref_wav = 'ref_wav/xiaofeng.wav'
 
 # Style token layer
 token_num = 10
-token_emb_size = 512
+token_emb_size = 256
 num_heads = 8
 
 # Encoder parameters
