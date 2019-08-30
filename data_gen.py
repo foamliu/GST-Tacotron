@@ -1,11 +1,11 @@
-import os
+import pickle
 import random
 
 import numpy as np
 import torch
 import torch.utils.data
 
-from config import thchs30_folder
+from config import data_file
 from models import layers
 from utils import load_wav_to_torch, text_to_sequence
 
@@ -18,7 +18,9 @@ class TextMelLoader(torch.utils.data.Dataset):
     """
 
     def __init__(self, split, hparams):
-        self.samples = get_thchs30_data(split)
+        with open(data_file, 'rb') as file:
+            data = pickle.load(file)
+        self.samples = data[split]
         self.sampling_rate = hparams.sampling_rate
         self.load_mel_from_disk = hparams.load_mel_from_disk
         self.stft = layers.TacotronSTFT(
@@ -103,26 +105,6 @@ class TextMelCollate:
             output_lengths[i] = mel.size(1)
 
         return text_padded, input_lengths, mel_padded, gate_padded, output_lengths
-
-
-# split in ['train', 'test', 'dev']
-def get_thchs30_data(split):
-    print('loading {} samples...'.format(split))
-
-    data_dir = os.path.join(thchs30_folder, 'data')
-    wave_dir = os.path.join(thchs30_folder, split)
-
-    samples = []
-
-    for file in os.listdir(wave_dir):
-        file_path = os.path.join(wave_dir, file)
-        if file_path.endswith('.wav'):
-            text_path = os.path.join(data_dir, file + '.trn')
-            with open(text_path, 'r', encoding='utf-8') as f:
-                text = f.readlines()[1].strip()
-            samples.append({'audiopath': file_path, 'text': text})
-
-    return samples
 
 
 if __name__ == '__main__':
