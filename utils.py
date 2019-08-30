@@ -244,21 +244,21 @@ def test(model, step_num, loss, get_mel):
     img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
     img = img / 255.
 
-    waveglow_path = 'waveglow_256channels.pt'
-    waveglow = torch.load(waveglow_path)['model']
-    waveglow.cuda().eval().half()
-    for k in waveglow.convinv:
-        k.float()
+    # waveglow_path = 'waveglow_256channels.pt'
+    # waveglow = torch.load(waveglow_path)['model']
+    # waveglow.cuda().eval().half()
+    # for k in waveglow.convinv:
+    #     k.float()
+    #
+    # mel_outputs_postnet = mel_outputs_postnet.type(torch.float16)
+    # with torch.no_grad():
+    #     audio = waveglow.infer(mel_outputs_postnet, sigma=0.666)
+    #
+    # audio = audio[0].data.cpu().numpy()
+    # audio = audio.astype(np.float32)
+    #
+    # mel_outputs_postnet = mel_outputs_postnet.float().data.cpu().numpy()[0]
+    # np.save('mel_outputs.npy', mel_outputs_postnet)
+    # print('save mel done')
 
-    mel_outputs_postnet = mel_outputs_postnet.type(torch.float16)
-    with torch.no_grad():
-        audio = waveglow.infer(mel_outputs_postnet, sigma=0.666)
-
-    audio = audio[0].data.cpu().numpy()
-    audio = audio.astype(np.float32)
-
-    mel_outputs_postnet = mel_outputs_postnet.float().data.cpu().numpy()[0]
-    np.save('mel_outputs.npy', mel_outputs_postnet)
-    print('save mel done')
-
-    return img, audio
+    return img  # , audio
