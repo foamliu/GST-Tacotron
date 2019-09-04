@@ -4,7 +4,8 @@ import pinyin
 import soundfile as sf
 import torch
 
-from config import sampling_rate
+import config
+from data_gen import TextMelLoader
 from utils import text_to_sequence, ensure_folder, plot_data, Denoiser
 
 if __name__ == '__main__':
@@ -26,6 +27,10 @@ if __name__ == '__main__':
     sequence = np.array(text_to_sequence(text))[None, :]
     sequence = torch.autograd.Variable(torch.from_numpy(sequence)).cuda().long()
 
+    valid_dataset = TextMelLoader('dev', config)
+    ref_mel = valid_dataset.get_mel(config.ref_wav)[None, :]
+    ref_mel = torch.autograd.Variable(np.transpose(ref_mel, (0, 2, 1))).cuda().float()
+
     mel_outputs, mel_outputs_postnet, _, alignments = model.inference(sequence)
     plot_data((mel_outputs.float().data.cpu().numpy()[0],
                mel_outputs_postnet.float().data.cpu().numpy()[0],
@@ -44,4 +49,4 @@ if __name__ == '__main__':
     print('audio.shape: ' + str(audio.shape))
     print(audio)
 
-    sf.write('output.wav', audio, sampling_rate, 'PCM_24')
+    sf.write('output.wav', audio, config.sampling_rate, 'PCM_24')
