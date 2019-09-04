@@ -31,7 +31,7 @@ if __name__ == '__main__':
     ref_mel = valid_dataset.get_mel(config.ref_wav)[None, :]
     ref_mel = torch.autograd.Variable(np.transpose(ref_mel, (0, 2, 1))).cuda().float()
 
-    mel_outputs, mel_outputs_postnet, _, alignments = model.inference(sequence)
+    mel_outputs, mel_outputs_postnet, _, alignments = model.inference(sequence, ref_mel)
     plot_data((mel_outputs.float().data.cpu().numpy()[0],
                mel_outputs_postnet.float().data.cpu().numpy()[0],
                alignments.float().data.cpu().numpy()[0].T))
