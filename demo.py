@@ -42,6 +42,8 @@ if __name__ == '__main__':
     mel_outputs_postnet = mel_outputs_postnet.type(torch.float16)
     with torch.no_grad():
         audio = waveglow.infer(mel_outputs_postnet, sigma=0.666)
+        # denoiser_strength = 0.0
+        # audio = denoiser(audio, denoiser_strength)
 
     audio = audio[0].data.cpu().numpy()
     audio = audio.astype(np.float32)
