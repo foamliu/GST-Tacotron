@@ -2,6 +2,8 @@
 
 A PyTorch implementation of [Style Tokens: Unsupervised Style Modeling, Control and Transfer in End-to-End Speech Synthesis](https://arxiv.org/abs/1803.09017).
 
+![image](https://github.com/foamliu/GST-Tacotron/raw/master/images/model.png)
+
 ## Dataset
 
 [THCHS-30 Dataset](http://www.openslr.org/18/).
